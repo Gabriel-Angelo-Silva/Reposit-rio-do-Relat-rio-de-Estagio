@@ -1,0 +1,9 @@
+let
+    Fonte = Excel.Workbook(File.Contents("C:\Users\xxxxxxxx\Documents\My SAS Files\FERIAS E LP\SGPTB22_UNIDADE_SEFAZ.xlsx"), null, true),
+    SGPTB22_UNIDADE_SEFAZ_Sheet = Fonte{[Item="SGPTB22_UNIDADE_SEFAZ",Kind="Sheet"]}[Data],
+    #"Cabeçalhos Promovidos" = Table.PromoteHeaders(SGPTB22_UNIDADE_SEFAZ_Sheet, [PromoteAllScalars=true]),
+    #"Tipo Alterado" = Table.TransformColumnTypes(#"Cabeçalhos Promovidos",{{"CODG_UNIDADE", Int64.Type}, {"NOME_UNIDADE", type text}, {"SGPTB22_CODG_UNIDADE_SUPERIOR", Int64.Type}, {"SGPTB05_CODG_AREA_FAZENDARIA", Int64.Type}, {"SIGL_UNIDADE", type text}, {"SGPTB02_CODG_TIPO_UNID_SEFAZ", Int64.Type}, {"SGPTB06_NUMR_MATR_SERV_RSPV", Int64.Type}, {"CODG_SITUACAO_UNIDADE", type text}, {"TIPO_ESTRUTURA_UNIDADE", Int64.Type}, {"TIPO_ORGAO_UNIDADE", Int64.Type}, {"ACCTB09_CODG_MUNICIPIO", Int64.Type}, {"ACCTB06_CODG_ENDERECO", Int64.Type}, {"CODG_ORDENACAO", type text}, {"DESC_OBSERVACAO", type text}, {"SGPTB06_MATR_SUBSTITUTO_01", Int64.Type}, {"SGPTB06_MATR_SUBSTITUTO_02", Int64.Type}, {"DATA_ATUALIZACAO_BD", type datetime}}),
+    #"Linhas Filtradas" = Table.SelectRows(#"Tipo Alterado", each ([NOME_UNIDADE] = "COORD. DE CONTROLE E TRAMITAÇÃO DE PROC. ADM. TRIBUTÁRIO" or [NOME_UNIDADE] = "COORD. DE JULGAMENTO DE IMPUGNAÇÃO DE CRÉDITO TRIBUTÁRIO" or [NOME_UNIDADE] = "UNIDADE DO CONTENCIOSO ADMINISTRATIVO TRIBUTÁRIO")),
+    #"Outras Colunas Removidas" = Table.SelectColumns(#"Linhas Filtradas",{"CODG_UNIDADE", "NOME_UNIDADE", "SGPTB22_CODG_UNIDADE_SUPERIOR", "SIGL_UNIDADE", "SGPTB06_NUMR_MATR_SERV_RSPV", "CODG_SITUACAO_UNIDADE", "SGPTB06_MATR_SUBSTITUTO_01", "SGPTB06_MATR_SUBSTITUTO_02", "DATA_ATUALIZACAO_BD"})
+in
+    #"Outras Colunas Removidas"
