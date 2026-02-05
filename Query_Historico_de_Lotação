@@ -1,0 +1,13 @@
+let
+    Fonte = Excel.Workbook(File.Contents("C:\Users\xxxxxxxx\Documents\My SAS Files\FERIAS E LP\SGPTB09_HISTORICO_LOTACAO.xlsx"), null, true),
+    SGPTB09_HISTORICO_LOTACAO_Sheet = Fonte{[Item="SGPTB09_HISTORICO_LOTACAO",Kind="Sheet"]}[Data],
+    #"Cabeçalhos Promovidos" = Table.PromoteHeaders(SGPTB09_HISTORICO_LOTACAO_Sheet, [PromoteAllScalars=true]),
+    #"Tipo Alterado" = Table.TransformColumnTypes(#"Cabeçalhos Promovidos",{{"SGPTB06_NUMR_MATR_SERV", Int64.Type}, {"SGPTB22_CODG_UNIDADE", Int64.Type}, {"DATA_INICIO_LOTACAO", type datetime}, {"DATA_FINAL_LOTACAO", type datetime}, {"DESC_OBSERVACAO_LOTACAO", type text}, {"DATA_PUBLICACAO_DOE", type text}, {"FLAG_OPRC", type text}, {"DATA_ATUALIZACAO_BD", type datetime}}),
+    #"Linhas Filtradas" = Table.SelectRows(#"Tipo Alterado", each [SGPTB06_NUMR_MATR_SERV] <> null and [SGPTB06_NUMR_MATR_SERV] <> ""),
+    #"Linhas Classificadas" = Table.Sort(#"Linhas Filtradas",{{"SGPTB06_NUMR_MATR_SERV", Order.Ascending}}),
+    #"Linhas Filtradas1" = Table.SelectRows(#"Linhas Classificadas", each ([SGPTB22_CODG_UNIDADE] = 1717 or [SGPTB22_CODG_UNIDADE] = 1718 or [SGPTB22_CODG_UNIDADE] = 1719)),
+    #"Linhas Classificadas1" = Table.Sort(#"Linhas Filtradas1",{{"SGPTB22_CODG_UNIDADE", Order.Ascending}}),
+    #"Tipo Alterado1" = Table.TransformColumnTypes(#"Linhas Classificadas1",{{"DATA_INICIO_LOTACAO", type date}, {"DATA_FINAL_LOTACAO", type date}, {"DATA_ATUALIZACAO_BD", type date}, {"DATA_PUBLICACAO_DOE", type datetime}}),
+    #"Tipo Alterado2" = Table.TransformColumnTypes(#"Tipo Alterado1",{{"DATA_PUBLICACAO_DOE", type date}})
+in
+    #"Tipo Alterado2"
