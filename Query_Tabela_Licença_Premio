@@ -1,0 +1,13 @@
+let
+    Fonte = Excel.Workbook(File.Contents("C:\Users\xxxxxxx\Documents\My SAS Files\FERIAS E LP\SGPTB16_LICENCA_PREMIO.xlsx"), null, true),
+    SGPTB16_LICENCA_PREMIO_Sheet = Fonte{[Item="SGPTB16_LICENCA_PREMIO",Kind="Sheet"]}[Data],
+    #"Cabeçalhos Promovidos" = Table.PromoteHeaders(SGPTB16_LICENCA_PREMIO_Sheet, [PromoteAllScalars=true]),
+    #"Tipo Alterado" = Table.TransformColumnTypes(#"Cabeçalhos Promovidos",{{"NUMR_SEQC_LICENCA_PREMIO", Int64.Type}, {"NUMR_PORTARIA", Int64.Type}, {"DATA_PUBLICACAO_DOE", type datetime}, {"DATA_INIC_PERIODO_AQUISITIVO", type datetime}, {"DATA_FIM_PERIODO_AQUISITIVO", type datetime}, {"QTDE_MESES_CONCEDIDOS", Int64.Type}, {"QTDE_MESES_REST_USUFRUIR", Int64.Type}, {"DESC_OBSERVACAO", type text}, {"CODG_SITUACAO_REGISTRO", Int64.Type}, {"SGPTB06_NUMR_MATR_SERV", Int64.Type}, {"DATA_ATUALIZACAO_BD", type datetime}, {"QTDE_DIAS_CONCEDIDOS", Int64.Type}, {"QTDE_DIAS_REST_USUFRUIR", Int64.Type}}),
+    #"Tipo Alterado1" = Table.TransformColumnTypes(#"Tipo Alterado",{{"DATA_PUBLICACAO_DOE", type date}, {"DATA_INIC_PERIODO_AQUISITIVO", type date}, {"DATA_FIM_PERIODO_AQUISITIVO", type date}, {"DATA_ATUALIZACAO_BD", type date}}),
+    #"Colunas Reordenadas" = Table.ReorderColumns(#"Tipo Alterado1",{"SGPTB06_NUMR_MATR_SERV", "NUMR_SEQC_LICENCA_PREMIO", "NUMR_PORTARIA", "DATA_PUBLICACAO_DOE", "DATA_INIC_PERIODO_AQUISITIVO", "DATA_FIM_PERIODO_AQUISITIVO", "QTDE_MESES_CONCEDIDOS", "QTDE_MESES_REST_USUFRUIR", "DESC_OBSERVACAO", "CODG_SITUACAO_REGISTRO", "DATA_ATUALIZACAO_BD", "QTDE_DIAS_CONCEDIDOS", "QTDE_DIAS_REST_USUFRUIR"}),
+    #"Linhas Classificadas" = Table.Sort(#"Colunas Reordenadas",{{"DATA_ATUALIZACAO_BD", Order.Descending}}),
+    #"Colunas Reordenadas1" = Table.ReorderColumns(#"Linhas Classificadas",{"SGPTB06_NUMR_MATR_SERV", "NUMR_SEQC_LICENCA_PREMIO", "NUMR_PORTARIA", "QTDE_DIAS_REST_USUFRUIR", "DATA_PUBLICACAO_DOE", "DATA_INIC_PERIODO_AQUISITIVO", "DATA_FIM_PERIODO_AQUISITIVO", "QTDE_MESES_CONCEDIDOS", "QTDE_MESES_REST_USUFRUIR", "DESC_OBSERVACAO", "CODG_SITUACAO_REGISTRO", "DATA_ATUALIZACAO_BD", "QTDE_DIAS_CONCEDIDOS"}),
+    #"Outras Colunas Removidas" = Table.SelectColumns(#"Colunas Reordenadas1",{"SGPTB06_NUMR_MATR_SERV", "NUMR_SEQC_LICENCA_PREMIO", "QTDE_DIAS_REST_USUFRUIR", "DATA_INIC_PERIODO_AQUISITIVO", "DATA_FIM_PERIODO_AQUISITIVO", "QTDE_MESES_CONCEDIDOS", "QTDE_MESES_REST_USUFRUIR", "DESC_OBSERVACAO", "CODG_SITUACAO_REGISTRO", "DATA_ATUALIZACAO_BD", "QTDE_DIAS_CONCEDIDOS"}),
+    #"Linhas Filtradas" = Table.SelectRows(#"Outras Colunas Removidas", each ([CODG_SITUACAO_REGISTRO] = 1))
+in
+    #"Linhas Filtradas"
