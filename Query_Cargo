@@ -1,0 +1,9 @@
+let
+    Fonte = Excel.Workbook(File.Contents("C:\Users\xxxxxxxx\Documents\My SAS Files\FERIAS E LP\SGPTB07_CARGO.xlsx"), null, true),
+    SGPTB07_CARGO_Sheet = Fonte{[Item="SGPTB07_CARGO",Kind="Sheet"]}[Data],
+    #"Cabeçalhos Promovidos" = Table.PromoteHeaders(SGPTB07_CARGO_Sheet, [PromoteAllScalars=true]),
+    #"Tipo Alterado" = Table.TransformColumnTypes(#"Cabeçalhos Promovidos",{{"NUMR_CARGO_SEQC", Int64.Type}, {"SIGL_CARGO", type text}, {"DESC_CARGO", type text}, {"QTDE_MAXI_VAGAS_CARGO", Int64.Type}, {"DESC_LEGISLACAO_CARGO", type text}, {"CODG_SITUACAO_CARGO", Int64.Type}, {"DATA_ATUALIZACAO_BD", type datetime}}),
+    #"Linhas Filtradas" = Table.SelectRows(#"Tipo Alterado", each ([DESC_CARGO] = "AGENTE DE ADMINISTRAÇÃO FAZENDÁRIA" or [DESC_CARGO] = "AGENTE DE FISCALIZAÇÃO E ARRECADAÇÃO DE TRIBUTOS ESTADUAIS" or [DESC_CARGO] = "ANALISTA ADMINISTRATIVO 40H" or [DESC_CARGO] = "AUXILIAR ADMINISTRATIVO OPERACIONAL" or [DESC_CARGO] = "CONSELHEIRO" or [DESC_CARGO] = "ESTAGIÁRIO DE GRADUAÇÃO NÍVEL SUPERIOR" or [DESC_CARGO] = "ESTAGIÁRIO DE PÓS-GRADUAÇÃO" or [DESC_CARGO] = "FISCAL DE TRIBUTOS ESTADUAIS" or [DESC_CARGO] = "RESIDENTE TÉCNICO" or [DESC_CARGO] = "TECNICO DE SUPORTE I" or [DESC_CARGO] = "TÉCNICO ADMINISTRATIVO 40H")),
+    #"Tipo Alterado1" = Table.TransformColumnTypes(#"Linhas Filtradas",{{"DATA_ATUALIZACAO_BD", type date}})
+in
+    #"Tipo Alterado1"
